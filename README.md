@@ -1,93 +1,121 @@
-# FrameIt — Photo Gallery Web App
+# FrameIt — Curated Photo Gallery
 
-A clean, responsive photo gallery web application built for the **Celebrare Frontend React Internship Pre-Screening Assignment**.
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-6.x-646CFF?logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-Live Demo: Running locally at `http://localhost:5173/`
-
----
-
-## 📌 Requirements Fulfillment Summary
-
-| # | Requirement | Implementation | Status |
-|---|---|---|---|
-| **1** | **Project Setup** | Built with React 19 + Vite. Styled purely with Tailwind CSS. Zero component libraries (no MUI, Bootstrap, or Ant Design). | ✅ Complete |
-| **2** | **Fetch Photos from API** | Fetches 30 photos on load from `https://picsum.photos/v2/list?limit=30` via browser native `fetch`. Visible loading spinner and clear error message state. | ✅ Complete |
-| **3** | **Responsive Grid** | Desktop: 4 columns (`lg:grid-cols-4`). Tablet: 2 columns (`sm:grid-cols-2`). Mobile: 1 column (`grid-cols-1`). Each card contains photo, author name, and an interactive heart button. | ✅ Complete |
-| **4** | **Search Filter** | Real-time author search at the top. Case-insensitive matching. Zero page reload. Zero API calls on search (filters already-fetched data). Graceful empty state when no author matches. | ✅ Complete |
-| **5** | **Favourites with `useReducer`** | Heart icon toggles favourite status. Managed exclusively through `useReducer` (no `useState` for favourites). Persisted across page refreshes using `localStorage`. | ✅ Complete |
-| **6** | **Custom Hook (`useFetchPhotos`)** | Extracted fetch logic into `src/hooks/useFetchPhotos.js`. Returns exactly `{ photos, loading, error }`. The `Gallery` component uses this hook instead of fetching directly. | ✅ Complete |
-| **7** | **`useCallback` + `useMemo`** | `useCallback` wraps the search filter handler. `useMemo` computes the filtered photo list from in-memory state. | ✅ Complete |
+**FrameIt** is a modern, responsive, and performance-focused photo gallery application built with React 19, Tailwind CSS v4, and Vite. It provides an intuitive platform to explore curated photography, perform instant real-time photographer searches, and bookmark favorite shots with seamless local persistence.
 
 ---
 
-## 📂 Project Architecture
+## ✨ Features
+
+- **📸 Curated Photography Stream**: Fetches high-resolution imagery dynamically from the Picsum Photos API with author attribution and aspect-ratio preservation.
+- **⚡ Instant Real-Time Search**: Filter photos on the fly by photographer name. All searches run client-side with zero latency, zero re-fetches, and an interactive clear button.
+- **❤️ Favourites Collection**: Toggle favourite photos with a single tap. Heart animations provide tactile feedback, and your collection is automatically persisted across browser reloads using `localStorage`.
+- **📐 Fully Responsive Layout**: Built with a mobile-first philosophy, adapting smoothly from a 1-column mobile view to 2 columns on tablets and 4 columns on desktop displays.
+- **🛡️ Robust Error & Loading States**: Clean animated spinner during data fetching, accompanied by graceful error handling with a retry trigger if network requests fail.
+- **✨ Polished Aesthetics & Micro-Interactions**: Glassmorphic sticky header, refined teal color accents, image hover-zoom effects, and Plus Jakarta Sans typography.
+
+---
+
+## 🛠️ Tech Stack
+
+| Technology | Role |
+|---|---|
+| **[React 19](https://react.dev/)** | Frontend library utilizing hooks (`useReducer`, `useMemo`, `useCallback`, `useState`, `useEffect`) |
+| **[Vite](https://vitejs.dev/)** | Next-generation frontend tooling for instant HMR and optimized production bundles |
+| **[Tailwind CSS v4](https://tailwindcss.com/)** | Modern utility-first CSS framework with native `@tailwindcss/vite` integration |
+| **[Picsum Photos API](https://picsum.photos/)** | Curated, high-fidelity photo service supplying image assets and metadata |
+| **[Oxlint](https://oxc.rs/)** | High-speed JavaScript/JSX linter for code health and standards enforcement |
+
+---
+
+## 📂 Project Structure
 
 ```text
-frameit/
+FrameIt/
 ├── public/
-│   └── favicon.svg              # Custom FrameIt camera & frame icon
+│   └── favicon.svg              # Custom camera lens & photo frame SVG icon
 ├── src/
 │   ├── components/
-│   │   └── PhotoCard.jsx        # Functional card with photo, author, and heart button
+│   │   └── PhotoCard.jsx        # Presentation card: image, author info, and favourite button
 │   ├── hooks/
-│   │   └── useFetchPhotos.js    # Custom hook returning { photos, loading, error }
-│   ├── App.jsx                  # Gallery component with search, favourites useReducer, and grid
-│   ├── index.css                # Tailwind CSS v4 entry point & base typography
-│   └── main.jsx                 # React root mount
-├── index.html                   # HTML entry with Plus Jakarta Sans & FrameIt title
-├── package.json                 # Minimal dependencies (React + Tailwind CSS)
-├── vite.config.js               # Vite config with @tailwindcss/vite plugin
-└── README.md
+│   │   └── useFetchPhotos.js    # Custom data-fetching hook with AbortController lifecycle safety
+│   ├── App.jsx                  # Main gallery view: header, search filter, grid, and useReducer
+│   ├── index.css                # Base stylesheet and Tailwind CSS v4 directives
+│   └── main.jsx                 # Application entry point and DOM root mount
+├── index.html                   # HTML template with Google Fonts (Plus Jakarta Sans)
+├── package.json                 # Project dependencies, build scripts, and metadata
+├── vite.config.js               # Vite bundler configuration with Tailwind plugin
+└── README.md                    # Project documentation
 ```
 
 ---
 
-## 🚀 Running the App Locally
+## 🧠 Engineering Highlights
 
-```bash
-# 1. Install dependencies
-npm install
+### 1. Custom Data Fetching Hook (`useFetchPhotos`)
+All remote communication is encapsulated inside a reusable `useFetchPhotos` hook. It handles asynchronous data retrieval, manages loading/error states, and utilizes an `AbortController` to cancel in-flight network requests on unmount, avoiding memory leaks or stale state updates.
 
-# 2. Start the Vite dev server
-npm run dev
+### 2. Predictable State with `useReducer`
+Photo bookmarking is driven by React's `useReducer` instead of basic state setters. This centralizes state transition rules (`TOGGLE_FAVOURITE`, `ADD_FAVOURITE`, `REMOVE_FAVOURITE`), guarantees immutable updates, and prevents duplicate entries.
 
-# 3. Production build
-npm run build
-```
+### 3. Smart Persistence (`localStorage`)
+The favourites list initializes lazily on startup from browser storage via `loadInitialFavourites()`. Any subsequent dispatch triggers an isolated side effect that serializes the state to `localStorage`, keeping user preferences intact across sessions without layout shifts.
+
+### 4. Render & Compute Optimization
+- **`useMemo`**: Derives the filtered photo list from the current search query, preventing expensive recalculations during unrelated renders (e.g. toggling favourite hearts).
+- **`useCallback`**: Memoizes event handlers to provide stable references across component re-renders.
+- **Native Lazy Loading**: Image tags include `loading="lazy"` to defer off-screen asset downloads and optimize bandwidth.
 
 ---
 
-## 🎙️ 5-Minute Screen Recording Script & Guide
+## 🚀 Getting Started
 
-Use this structured guide during your 5-minute recording to address all rubric points:
+### Prerequisites
 
-### 1. Show the App Working (1:00 min)
-- Open `http://localhost:5173/` in the browser.
-- Point out the initial load with the spinner before the 30 photos display.
-- Type `"Alejandro"` in the search bar: show photos filtering instantly in real-time.
-- Type `"xyz123"`: show the friendly empty state message and click "Clear search filter".
-- Click heart icon on 2–3 cards: show them turning into filled rose hearts with tactile feedback.
-- Refresh the browser (F5): show that the favourited hearts remain filled (persisted in `localStorage`).
+Ensure you have [Node.js](https://nodejs.org/) (v18.0.0 or later) and `npm` installed.
 
-### 2. Open `src/hooks/useFetchPhotos.js` (1:00 min)
-- **What does it return?**: An object with exactly three properties: `photos` (array), `loading` (boolean), and `error` (string or null).
-- **What happens if the API fails?**: If the response is not `ok` (e.g., HTTP 500 or 404) or a network failure happens, an error is caught, `error` state is updated with a user-friendly message, and `loading` is set to `false`. An `AbortController` handles unmount cleanup so aborted requests do not update unmounted component state.
+### Installation
 
-### 3. Open `src/App.jsx` — `useReducer` Code (1:00 min)
-- **What actions does your reducer handle?**: `TOGGLE_FAVOURITE` (as well as `ADD_FAVOURITE` / `REMOVE_FAVOURITE`). It checks if the photo ID is already present; if yes, it filters it out; if no, it appends it immutably.
-- **Why use `useReducer` instead of `useState`?**:
-  1. **Separation of State Logic**: It extracts state transition logic outside of the component body, making the state predictable and pure.
-  2. **Complex State Transitions**: Toggling an item in a collection requires conditional membership checks and deduplication; `useReducer` ensures atomic and testable updates without race conditions or multiple `setState` calls.
-  3. **Scalability**: As state rules grow, reducers keep state changes centralized in one place.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Vish-0806/FrameIt.git
+   cd FrameIt
+   ```
 
-### 4. Explain `useCallback` and `useMemo` (1:00 min)
-- **`useCallback` (on `handleSearchChange`)**:
-  - *Problem it solves*: Every time `Gallery` renders, new function instances are ordinarily created. `useCallback` memoizes the function reference so it remains stable across renders.
-  - *What would break/happen if removed*: The app would still functionally work, but child inputs or memoized components would receive new function references on every render, triggering unnecessary re-renders.
-- **`useMemo` (on `filteredPhotos`)**:
-  - *Problem it solves*: Avoids running the `.filter()` operation on all 30 items on unrelated component re-renders (like when favourites are toggled).
-  - *What would break/happen if removed*: The entire array filter would execute on every single state change (e.g., each heart toggle), leading to unnecessary CPU cycles as the gallery size grows.
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-### 5. Show One Thing That Was Difficult & How You Solved It (1:00 min)
-- **The Challenge**: Synchronizing `useReducer` with browser `localStorage` during initial mount and updates without flashing empty favourites or running into hydration/parsing mismatches.
-- **The Solution**: Used the third argument of `useReducer` (lazy initialization function: `loadInitialFavourites`) which safely reads and parses `localStorage` once on mount inside a `try...catch` block. Combined with an isolated `useEffect` watching `[favourites]`, state updates are saved reliably without blocking renders.
+3. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+   Open your browser and navigate to `http://localhost:5173/`.
+
+### Available Scripts
+
+| Command | Action |
+|---|---|
+| `npm run dev` | Starts Vite dev server with instant Hot Module Replacement (HMR) |
+| `npm run build` | Compiles and optimizes assets into the `dist/` directory |
+| `npm run preview` | Previews the production build locally |
+| `npm run lint` | Runs Oxlint to identify code style issues and potential bugs |
+
+---
+
+## ♿ Accessibility & UX
+
+- **Keyboard Navigable**: All interactive controls (search input, clear action, heart buttons) include standard keyboard focus states with high-contrast rings.
+- **Screen Reader Support**: Semantic HTML (`<header>`, `<main>`, `<article>`) coupled with descriptive `aria-label` attributes on dynamic buttons.
+- **Responsive Typography**: Scaled with fluid sizes and comfortable line heights for effortless reading on any screen size.
+
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).

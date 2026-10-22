@@ -49,20 +49,20 @@ function favouritesReducer(state, action) {
  * Uses useFetchPhotos, useReducer for favourites, and performance hooks.
  */
 export default function Gallery() {
-  // Requirement 6: Extract fetch logic into custom hook useFetchPhotos
+  // Custom hook extracting remote photo retrieval logic
   const { photos, loading, error } = useFetchPhotos();
 
   // Search input state (search query string)
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Requirement 5: Manage favourites list using useReducer (not useState)
+  // Manage favourites collection with useReducer for atomic state transitions
   const [favourites, dispatchFavourites] = useReducer(
     favouritesReducer,
     [],
     loadInitialFavourites
   );
 
-  // Requirement 5: Persist favourited photos to localStorage whenever state updates
+  // Persist favourited photos to localStorage whenever state updates
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(favourites));
@@ -71,7 +71,7 @@ export default function Gallery() {
     }
   }, [favourites]);
 
-  // Requirement 7: useCallback on search filter handler
+  // Memoized search filter input handler
   const handleSearchChange = useCallback((e) => {
     setSearchQuery(e.target.value);
   }, []);
@@ -86,7 +86,7 @@ export default function Gallery() {
     dispatchFavourites({ type: 'TOGGLE_FAVOURITE', payload: photoId });
   }, []);
 
-  // Requirement 7: useMemo to compute the filtered photo list by author name
+  // Memoized filtered photo list by author name
   const filteredPhotos = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     if (!query) {
@@ -136,7 +136,7 @@ export default function Gallery() {
             </div>
           </div>
 
-          {/* Requirement 4: Search input at the top */}
+          {/* Real-time author search input */}
           <div className="w-full md:w-96">
             <label htmlFor="search-author" className="sr-only">
               Filter photos by author name
@@ -195,7 +195,7 @@ export default function Gallery() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-        {/* Requirement 2: Show a loading spinner while fetching */}
+        {/* Loading spinner while fetching */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-32 text-teal-700">
             <div className="relative w-14 h-14">
@@ -210,7 +210,7 @@ export default function Gallery() {
           </div>
         )}
 
-        {/* Requirement 2: Show an error message if the fetch fails */}
+        {/* Error message state if the fetch fails */}
         {!loading && error && (
           <div className="max-w-md mx-auto my-16 p-6 sm:p-8 bg-white border border-rose-200 rounded-2xl text-center shadow-[0_8px_24px_rgba(244,63,94,0.08)]">
             <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center rounded-full bg-rose-50 text-rose-600">
@@ -237,7 +237,7 @@ export default function Gallery() {
           </div>
         )}
 
-        {/* Requirement 4: Real-time search filter — Empty result state */}
+        {/* Real-time search filter — Empty result state */}
         {!loading && !error && filteredPhotos.length === 0 && (
           <div className="max-w-md mx-auto py-24 text-center">
             <div className="w-14 h-14 mx-auto mb-4 flex items-center justify-center rounded-2xl bg-teal-50 border border-teal-200/70 text-teal-600 shadow-xs">
@@ -272,7 +272,7 @@ export default function Gallery() {
           </div>
         )}
 
-        {/* Requirement 3: Responsive Grid: Desktop: 4 cols, Tablet: 2 cols, Mobile: 1 col */}
+        {/* Responsive Grid: Desktop: 4 cols, Tablet: 2 cols, Mobile: 1 col */}
         {!loading && !error && filteredPhotos.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
             {filteredPhotos.map((photo) => (
